@@ -1,25 +1,7 @@
 // Read file
-const fs = require('fs'); let filename = process.argv[2] || 'inp.txt'
+const fs = require('fs'); let filename = process.argv[2] || 'finalInput.txt'
 let f = fs.readFileSync(filename, 'utf8')
 const m = f.split('\n').filter(item => item != '')
-
-
-/*
-planet1(
-  'B': {
-  orbit: 'COM',
-  moons: ['C','D']
-  }
-)
-
-planet2(
-  'C': {
-    orbit: 'B',
-    moons: ['E']
-  }
-)
-*/
-
 
 function mapParser(mapInput) {
 
@@ -31,15 +13,15 @@ function mapParser(mapInput) {
     let moon = orbitalSplit[1]
 
     if (!planets.has(planet)){
-      planets.set(planet, {orbits: '', moons:[moon]})
+      planets.set(planet, {mother: '', moons:[moon]})
     } else {
       planets.get(planet).moons.push(moon)
     }
 
     if (!planets.has(moon)) {
-      planets.set(moon, {orbits: planet, moons: []})
+      planets.set(moon, {mother: planet, moons: []})
     } else {
-      planets.get(moon).orbits = planet
+      planets.get(moon).mother = planet
     }
 
   }
@@ -47,11 +29,25 @@ function mapParser(mapInput) {
   return planets
 }
 
-function orbitDrawer (planetArray) {
-  for (planet in planetArray) {
-    continue
+function stepsToCOM(planet, planetMap, stepsFromStart) {
+  let motherPlanet = planetMap.get(planet).mother
+  if (motherPlanet != '') {
+    stepsFromStart++
+    if (motherPlanet != 'COM'){
+      stepsFromStart = stepsToCOM(motherPlanet, planetMap, stepsFromStart)
+    }
+  } else {
+   return stepsFromStart
+
   }
+  return stepsFromStart
 }
-//console.log(f)
-astralMap = mapParser(m)
-console.log(astralMap)
+
+planetMap = mapParser(m)
+let totalOrbits = 0
+for (planet of planetMap) {
+  console.log(planet[0])
+  totalOrbits += stepsToCOM(planet[0],planetMap,0)
+}
+
+console.log('Total number of orbits is ' + totalOrbits)
