@@ -5,7 +5,7 @@ let f = fs.readFileSync(filename, 'utf8')
 const m = f.split('\n').filter(item => item != '')
 const opCode = m[0].split(',').map(item => parseInt(item))
 
-let amplifierPhaseSetting = '10432'
+let amplifierPhaseSetting = '01234'
 let amplifier = {A: {}, B: {}, C: {}, D:{}, E:{}}
 
 let maxThrustSetting = 0
